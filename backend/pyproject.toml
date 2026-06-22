@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "trust-tma-backend"
+version = "0.1.0"
+description = "Telegram bot + API backend for the Evolution of Trust Mini App"
+requires-python = ">=3.12"
+dependencies = [
+    "aiogram>=3.0,<4",
+    "pydantic-settings>=2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff",
+    "pyright",
+    "pytest",
+]
+
+[tool.setuptools]
+packages = ["app", "app.bot", "app.bot.handlers", "app.core"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.pyright]
+typeCheckingMode = "basic"
+venvPath = "."
+venv = ".venv"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]

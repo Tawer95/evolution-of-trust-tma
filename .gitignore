@@ -1,0 +1,45 @@
+# --- Эталонный код игры (временный, удаляется в конце; имеет вложенные .git) ---
+reference-code/
+
+# --- Секреты (НИКОГДА в git, даже в приватном) ---
+.env
+.env.*
+!.env.example
+config/local.*
+*.local.yaml
+*.secret
+
+# --- Claude Code local (машинные права/настройки) ---
+.claude/settings.local.json
+
+# --- Нетехнические отчёты (личный канал, вне репо) ---
+docs/progress-reports/
+
+# --- Python (backend) ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+.coverage
+htmlcov/
+
+# --- Node (фронт-тулинг, если появится) ---
+node_modules/
+dist/
+.vite/
+npm-debug.log*
+
+# --- ОС / редакторы ---
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# --- Логи ---
+*.log
+logs/
