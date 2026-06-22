@@ -2,7 +2,7 @@
 
 Append-only история. На каждый PR — запись (в `/commit-pr`). Целиком не читать — grep по дате/этапу.
 
-## 2026-06-22 — Stage 1: Каркас (Telegram WebApp + бот) (PR #<N>)
+## 2026-06-22 — Stage 1: Каркас (Telegram WebApp + бот) (PR #1)
 - Проект инициализирован: pipeline в `.claude` (10 агентов + 10 команд + git-guard), `CLAUDE.md`, полное ТЗ (`docs/TZ-trust-tma-v1.0.md`, Часть I–IV), справка (`CODE-MAP`/`GAME-OVERVIEW`/`TMA-INTEGRATION`), сырые копии оригинала в `docs/reference/`.
 - Игра «The Evolution of Trust» (Nicky Case, CC0) скопирована в `webapp/` as-is — движок (`js/lib|core|sims|slides`) не тронут.
 - Telegram-слой `webapp/js/telegram/init.js` (`ready()`/`expand()` + guard вне Telegram); `index.html` ADAPT (SDK в `<head>`, `init.js` после `main.js`, viewport meta).
