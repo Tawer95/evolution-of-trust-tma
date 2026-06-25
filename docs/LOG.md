@@ -11,3 +11,11 @@ Append-only история. На каждый PR — запись (в `/commit-p
 - Гейты: ruff/format чисто, pyright 0 errors, pytest 2 passed. Review (architect): блокеров нет; P1 (webapp_url обязателен) пофикшен; P2 принят для этапа.
 - Тесты: 2 passed; Manual: подтверждён юзером — игра открывается и играется в реальном Telegram (desktop + mobile, через HTTPS-хостинг Netlify).
 - Known issue → Stage 2: viewport-обрезка по краям в webview (fix вместе с RU/EN + темой).
+
+## 2026-06-23 — Stage 2: RU/EN + тема + хаптика + viewport-fit (ветка feat/stage-2-i18n-theme-fit, PR #<N — pending>)
+- **i18n RU/EN:** `Words.texts={en,ru}` (оба грузятся на boot) + EN-фолбэк; ре-рендер видимых текстов по маркеру `data-word-id` (TextBox/Button); тумблер в футере, дефолт из `language_code`. `words.en/ru.html` + `tools/i18n-parity.mjs` (232=232).
+- **Тема (decision A):** игра всегда белая; `--tg-theme-*` красит только chrome (body/футер/тумблер/метки звука/preloader).
+- **Хаптика:** light по `.button`-тапам + notification на конце раунда (guard 6.1).
+- **Viewport-fit:** наивный подход (scale на `#slideshow_container`) **переделан** после manual-теста — он масштабировал и полноэкранные симуляции (Splash меряется по `#main`), ломая их + триггер был ненадёжен. Итог: `#main` = дизайн-кадр 960×540, масштабируем сам `#main` (`--game-scale` от размеров окна) → симуляции меряются по `#main`=960 и согласованы; `#footer` fixed.
+- **Review (architect+game-engine+ux):** APPROVE; пофикшены: viewport↔layout-синхрон, метки звука в светлой теме, скрыт `#translations`, хаптика только по кнопкам, цвета (игра белая в тёмной теме).
+- Гейты: parity OK, синтаксис/serve OK. **Manual в Telegram:** в процессе (цвета — ок; ожидается ре-тест фита/тап-точности/анимаций после передеплоя). НЕ закоммичено.
