@@ -12,7 +12,7 @@ Append-only история. На каждый PR — запись (в `/commit-p
 - Тесты: 2 passed; Manual: подтверждён юзером — игра открывается и играется в реальном Telegram (desktop + mobile, через HTTPS-хостинг Netlify).
 - Known issue → Stage 2: viewport-обрезка по краям в webview (fix вместе с RU/EN + темой).
 
-## 2026-06-23 — Stage 2: RU/EN + тема + хаптика + viewport-fit (ветка feat/stage-2-i18n-theme-fit, PR #<N — pending>)
+## 2026-06-23 — Stage 2: RU/EN + тема + хаптика + viewport-fit (ветка feat/stage-2-i18n-theme-fit, PR #2)
 - **i18n RU/EN:** `Words.texts={en,ru}` (оба грузятся на boot) + EN-фолбэк; ре-рендер видимых текстов по маркеру `data-word-id` (TextBox/Button); тумблер в футере, дефолт из `language_code`. `words.en/ru.html` + `tools/i18n-parity.mjs` (232=232).
 - **Тема (decision A):** игра всегда белая; `--tg-theme-*` красит только chrome (body/футер/тумблер/метки звука/preloader).
 - **Хаптика:** light по `.button`-тапам + notification на конце раунда (guard 6.1).
