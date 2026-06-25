@@ -4,8 +4,12 @@ window.onload = function(){
 	// PRELOADER
 	Q.all([
 		Loader.loadAssets(Loader.manifestPreload),
-		Words.convert("words.html")
+		Words.convert("words.en.html", "en"),
+		Words.convert("words.ru.html", "ru")
 	]).then(function(){
+
+		// Язык: дефолт ставит js/telegram/lang.js до onload; фолбэк en
+		Words.setLang(Words.currentLang || "en");
 
 		// CHANGE DOM
 		document.body.removeChild($("#preloader"));

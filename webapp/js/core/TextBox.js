@@ -17,6 +17,7 @@ function TextBox(config){
 	};
 	self.setTextID = function(id){
 		self.text_id = id;
+		self.dom.setAttribute("data-word-id", id); // ре-рендер при смене языка (Telegram-слой)
 		self.setText(Words.get(self.text_id));
 	};
 	if(config.text_id) self.setTextID(config.text_id);
@@ -52,6 +53,7 @@ function CharacterTextBox(config){
 	// Description
 	var desc = document.createElement("div");
 	desc.id = "desc";
+	desc.setAttribute("data-word-id", "character_"+config.character); // ре-рендер при смене языка
 	desc.innerHTML = Words.get("character_"+config.character);
 	self.dom.appendChild(desc);
 
