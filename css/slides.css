@@ -145,6 +145,49 @@ s{
 	top:-270px;
 
 }
+
+/* ===== Telegram Mini App (Stage 2) — наш слой: viewport-fit + тема на chrome + lang-toggle =====
+   Идёт ПОСЛЕ оригинальных правил => перекрывает их по порядку.
+   VIEWPORT-FIT: #main = дизайн-кадр 960×540. Симуляции (Splash/Background/Scratcher) меряют свой
+   размер по $("#main").clientWidth — поэтому #main ДОЛЖЕН быть 960×540, иначе splash рендерится по
+   размеру вьюпорта и рассинхронится со слайдами при масштабировании. Масштабируем сам #main
+   (clientWidth остаётся 960 — transform не влияет на layout). letterbox = фон body под тему.
+   DECISION A: игровой кадр (#main) всегда белый; тема Telegram красит только body/футер/UI. */
+html, body{ height: var(--tg-viewport-stable-height, 100%); } /* стабильная высота Telegram-viewport */
+body{ background: var(--tg-theme-bg-color, #fff); overflow: hidden; position: relative; } /* containing block для #main = body (stable-height) */
+#main{
+	width: 960px;
+	height: 540px;
+	position: absolute;
+	top: 0; left: 0; right: 0; bottom: 60px;   /* центрируем над футером (60px) */
+	margin: auto;
+	overflow: hidden;
+	background: #fff;                            /* игра всегда белая (decision A) */
+	transform: scale(var(--game-scale, 1));     /* масштаб задаёт js/telegram/init.js */
+	transform-origin: center center;
+}
+#slideshow_container{ transform: none; }        /* масштаб теперь на #main, не здесь */
+#footer{
+	position: fixed;
+	bottom: 0; left: 0;
+	width: 100%;
+	height: 60px;
+	background: var(--tg-theme-secondary-bg-color, #222);
+}
+#preloader{ color: var(--tg-theme-text-color, #333); }
+#translations{ display: none; }                 /* fan-translations: внешние ссылки бесполезны в Mini App */
+#sound #sound_on{ color: var(--tg-theme-text-color, #fff); }
+#sound #sound_off{ color: var(--tg-theme-hint-color, #595959); }
+#lang_toggle{
+	position: absolute;
+	left: 128px; top: 5px;
+	height: 50px; line-height: 50px;
+	font-size: 26px;
+	cursor: pointer;
+	color: var(--tg-theme-text-color, #fff);
+}
+#lang_toggle:hover{ opacity: 0.7; }
+/* ===== /Telegram Mini App ===== */
 .object{
 	position: absolute;
 	transition: left 0.5s ease-in-out, top 0.5s ease-in-out;
