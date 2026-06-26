@@ -150,6 +150,15 @@ s{
    VIEWPORT-FIT делается через <meta name="viewport" content="width=960"> (как в оригинале: фикс-ширина 960,
    браузер сам масштабирует под экран). Layout движка и #main НЕ трогаем; body остаётся белым (игра). */
 #footer{ background: var(--tg-theme-secondary-bg-color, #222); } /* только chrome под тему */
+/* Подсказка «поверни телефон» — только на мобиле (coarse pointer) в портрете; в ландшафте/на десктопе скрыта */
+#rotate_hint{ display: none; }
+@media (orientation: portrait) and (pointer: coarse){
+	#rotate_hint{
+		display: block; position: fixed; top: 0; left: 0; right: 0; z-index: 3000;
+		padding: 10px 14px; text-align: center; font-size: 16px; line-height: 1.3;
+		background: var(--tg-theme-secondary-bg-color, #222); color: var(--tg-theme-text-color, #fff);
+	}
+}
 #preloader{ color: var(--tg-theme-text-color, #333); }
 #translations{ display: none; }                 /* fan-translations: внешние ссылки бесполезны в Mini App */
 #sound #sound_on{ color: var(--tg-theme-text-color, #fff); }
