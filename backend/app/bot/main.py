@@ -1,4 +1,5 @@
 import asyncio
+import logging
 
 from aiogram import Bot, Dispatcher
 
@@ -13,7 +14,9 @@ def build_dispatcher() -> Dispatcher:
 
 
 async def main() -> None:
+    logging.basicConfig(level=logging.INFO)
     settings = get_settings()
+    logging.getLogger("bot").info("WEBAPP_URL = %s", settings.webapp_url)  # видно, какой URL уйдёт в кнопку
     bot = Bot(token=settings.bot_token)
     dp = build_dispatcher()
     try:

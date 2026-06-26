@@ -18,7 +18,7 @@ Telegram Mini App — порт интерактивной игры **«The Evolu
 
 **Инфра:** docker-compose (postgres); хостинг статики `webapp` (**HTTPS обязателен** — Telegram не откроет Mini App по HTTP) + backend.
 
-## Структура (план)
+## Структура (статус и детали — `docs/ARCHITECTURE.md`)
 ```
 webapp/   index.html · css/ · js/{lib,core,sims,slides}=оригинал · js/telegram/=наш слой · words.en.html · words.ru.html · assets/
 backend/  app/bot (хендлеры aiogram) · app/api (FastAPI routes + initData-auth) · app/services · app/db (models/repositories/migrations) · app/core (config/logging/i18n)
@@ -27,15 +27,15 @@ reference-code/  эталон игры (временно, удаляется в 
 ```
 
 ## Конвенции
-**Фронт (анти-регресс оригинала):** игровой движок (`js/core`, `js/sims`, `js/slides`, `js/lib`) НЕ трогаем без причины — порт «as-is». Наш код — отдельно в `js/telegram/` (namespace `TG`), цепляется к pub/sub-событиям игры (см. `CODE-MAP.md` → Integration seams), движок не правит. Глобалы оригинала (`c_`, `createjs`, `Ticker`, `publish`/`subscribe`) уважаем. i18n: один `words.<lang>.html` за раз; **parity EN/RU обязателен** (множество ключей совпадает).
+**Фронт (анти-регресс оригинала):** игровой движок (`js/core`, `js/sims`, `js/slides`, `js/lib`) НЕ трогаем без причины — порт «as-is». Наш код — отдельно в `js/telegram/` (namespace `TG`), цепляется к pub/sub-событиям игры (см. `CODE-MAP.md` → Integration seams), движок не правит. Глобалы оригинала (`c_`, `createjs`, `Ticker`, `publish`/`subscribe`) уважаем. **i18n:** грузим оба `words.{en,ru}.html` в `Words.texts`, рантайм-переключение `Words.setLang` + ре-рендер по `data-word-id` (+EN-фолбэк); **parity EN/RU обязателен** (`tools/i18n-parity.mjs`). **Viewport-fit:** `#main` = дизайн-кадр 960×540 (симуляции меряют размер по `$("#main").clientWidth`), масштабируем сам `#main` через `--game-scale`. **Decision A:** игра всегда на белом фоне; тема Telegram (`--tg-theme-*`) красит только chrome (body/футер/UI).
 
 **Бэк (конвенции в стиле Andrei_bot):** Handlers `cb_{action}(callback)` / `handle_{action}(message)`; `Router(name=...)`. API-routes тонкие → `app/services`. Services: `async with session_scope()`. Repos: `{Entity}Repository` (`get_by_*` / `create`(flush, НЕ commit) / `list_*`); Models: `{Entity}(Base, TimestampMixin)` + `__tablename__`. DI: `get_settings()` (lru_cache), `get_logger(__name__)` (structlog, key-value не f-string). **initData валидируется на КАЖДОМ запросе API** (FastAPI dependency). Лидерборд: счёт привязан к telegram `user_id` из **verified** initData, НЕ из тела запроса.
 
 ## Telegram Mini App — ключевое
 - **initData security:** проверять HMAC-SHA256 подпись initData серверным bot-token'ом (алгоритм — `docs/TMA-INTEGRATION.md`). Identity юзера берём ТОЛЬКО из verified initData, никогда из клиентского payload. Просроченный `auth_date` → reject.
 - **CloudStorage:** прогресс (текущий слайд) — `Telegram.WebApp.CloudStorage` (клиентское, без БД).
-- **Theme / Haptics:** `themeParams` → CSS-переменные; `HapticFeedback` на тапах кнопок.
-- **Viewport:** `ready()` + `expand()`; учитывать `viewportStableHeight` / safe area; игра под фикс-размер — нужна адаптация (см. `CODE-MAP.md` → webview risks).
+- **Theme / Haptics:** Telegram авто-инжектит `--tg-theme-*` — тема только на chrome, игра белая (decision A); `HapticFeedback` на тапах `.button` (guard `isVersionAtLeast('6.1')`).
+- **Viewport-fit:** `ready()`+`expand()`; `#main` = дизайн-кадр 960×540, scale через `--game-scale` = `min(1, innerW/960, (stableH−60)/540)` (init.js, на load/resize/`viewportChanged`); симуляции меряются по `#main` (clientWidth=960). Детали — `docs/ARCHITECTURE.md`.
 - **Share:** через WebApp (`switchInlineQuery` / `shareMessage` или ссылка `t.me/<bot>/<app>?startapp=...`).
 
 ## Dev-команды (ориентир; уточняется при сборке скелета)

@@ -47,6 +47,8 @@ function Button(config){
 	self.setText = function(text_id){
 		var words = Words.get(text_id);
 		if(config.uppercase) words = words.toUpperCase();
+		text.setAttribute("data-word-id", text_id); // ре-рендер при смене языка (Telegram-слой)
+		if(config.uppercase) text.setAttribute("data-uppercase", "1");
 		self.setText2(words);
 	};
 	self.setText2 = function(words){
