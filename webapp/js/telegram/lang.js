@@ -10,6 +10,19 @@
   // main.js (window.onload .then) вызовет Words.setLang(Words.currentLang) до первого рендера.
   if (window.Words) window.Words.currentLang = lang;
 
+  // Восстановить сохранённый язык из CloudStorage (async, приоритетнее language_code).
+  (function () {
+    var c = window.TG && TG.cloud && TG.cloud();
+    if (!c) return;
+    c.getItem("lang", function (err, val) {
+      if (err || (val !== "ru" && val !== "en") || !window.Words) return;
+      window.Words.currentLang = val;
+      if (window.Words.text) { window.Words.setLang(val); window.Words.rerender(); } // если уже отрендерено
+      var btn = document.getElementById("lang_toggle");
+      if (btn) btn.textContent = (val === "ru") ? "EN" : "RU";
+    });
+  })();
+
   function wire() {
     var btn = document.getElementById("lang_toggle");
     if (!btn || !window.Words) return;
@@ -20,6 +33,7 @@
       window.Words.setLang(next);
       window.Words.rerender();
       label();
+      if (window.TG && TG.saveLang) TG.saveLang(next);
       if (window.TG && TG.wa && TG.wa.HapticFeedback && TG.wa.isVersionAtLeast && TG.wa.isVersionAtLeast("6.1")) {
         TG.wa.HapticFeedback.selectionChanged();
       }
