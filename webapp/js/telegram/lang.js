@@ -1,4 +1,5 @@
-// RU/EN переключатель — наш слой. Дефолт из Telegram language_code (untrusted, только для UI).
+// RU/EN переключатель + текст подсказки о повороте — наш слой.
+// Дефолт языка из Telegram language_code (untrusted, только UI); персист в CloudStorage.
 (function () {
   var lang = "en";
   try {
@@ -6,9 +7,19 @@
     var lc = tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.language_code;
     if (lc && /^ru/i.test(lc)) lang = "ru";
   } catch (e) { /* нет Telegram — остаёмся на en */ }
-
-  // main.js (window.onload .then) вызовет Words.setLang(Words.currentLang) до первого рендера.
   if (window.Words) window.Words.currentLang = lang;
+
+  // Обновить наш UI (тумблер + подсказка о повороте) под текущий язык.
+  function refreshUi() {
+    if (!window.Words) return;
+    var ru = window.Words.currentLang === "ru";
+    var btn = document.getElementById("lang_toggle");
+    if (btn) btn.textContent = ru ? "EN" : "RU";
+    var hint = document.getElementById("rotate_hint");
+    if (hint) hint.textContent = ru
+      ? "↻ Поверни телефон — игра будет на весь экран"
+      : "↻ Rotate your phone for fullscreen";
+  }
 
   // Восстановить сохранённый язык из CloudStorage (async, приоритетнее language_code).
   (function () {
@@ -18,27 +29,25 @@
       if (err || (val !== "ru" && val !== "en") || !window.Words) return;
       window.Words.currentLang = val;
       if (window.Words.text) { window.Words.setLang(val); window.Words.rerender(); } // если уже отрендерено
-      var btn = document.getElementById("lang_toggle");
-      if (btn) btn.textContent = (val === "ru") ? "EN" : "RU";
+      refreshUi();
     });
   })();
 
   function wire() {
     var btn = document.getElementById("lang_toggle");
     if (!btn || !window.Words) return;
-    var label = function () { btn.textContent = (window.Words.currentLang === "ru") ? "EN" : "RU"; };
-    label();
+    refreshUi();
     btn.onclick = function () {
       var next = (window.Words.currentLang === "ru") ? "en" : "ru";
       window.Words.setLang(next);
       window.Words.rerender();
-      label();
+      refreshUi();
       if (window.TG && TG.saveLang) TG.saveLang(next);
       if (window.TG && TG.wa && TG.wa.HapticFeedback && TG.wa.isVersionAtLeast && TG.wa.isVersionAtLeast("6.1")) {
         TG.wa.HapticFeedback.selectionChanged();
       }
     };
   }
-  // #lang_toggle объявлен в index.html выше этого скрипта — доступен сразу.
+  // #lang_toggle и #rotate_hint объявлены в index.html выше — доступны сразу.
   wire();
 })();
