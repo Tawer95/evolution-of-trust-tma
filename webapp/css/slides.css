@@ -147,9 +147,22 @@ s{
 }
 
 /* ===== Telegram Mini App (Stage 2/3) — тема на chrome (decision A: игра белая) + lang-toggle + resume-оверлей =====
-   VIEWPORT-FIT делается через <meta name="viewport" content="width=960"> (как в оригинале: фикс-ширина 960,
-   браузер сам масштабирует под экран). Layout движка и #main НЕ трогаем; body остаётся белым (игра). */
-#footer{ background: var(--tg-theme-secondary-bg-color, #222); } /* только chrome под тему */
+   VIEWPORT-FIT (fix desktop+mobile): дизайн-кадр #game_frame = 960×600 (игра 540 + футер 60) масштабируется
+   под доступный вьюпорт через --game-scale = min(W/960, H/600, 1) — cap=1 не апскейлит (раньше width=960 в meta
+   зумил игру ВВЕРХ на широком desktop-webview → обрезка). #main зафиксирован 960×540, чтобы Splash рисовал ровно
+   дизайн (offset=0). Поля вокруг кадра — letterbox (body=chrome-тема), сама игра белая (#main). */
+#game_frame{
+	position: absolute; top: 50%; left: 50%;
+	width: 960px; height: 600px;
+	transform: translate(-50%, -50%) scale(var(--game-scale, 1));
+	transform-origin: center center;
+}
+#main{ width: 960px; height: 540px; background: #fff; }   /* фикс дизайн-кадр + белый фон игры (override original) */
+#footer{
+	position: relative; width: 960px; height: 60px;
+	background: var(--tg-theme-secondary-bg-color, #222);  /* только chrome под тему */
+}
+body{ background: var(--tg-theme-bg-color, #fff); }        /* letterbox-поля вокруг кадра */
 /* Подсказка «поверни телефон» — только на мобиле (coarse pointer) в портрете; в ландшафте/на десктопе скрыта */
 #rotate_hint{ display: none; }
 @media (orientation: portrait) and (pointer: coarse){
